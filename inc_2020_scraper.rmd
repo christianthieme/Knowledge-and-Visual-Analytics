@@ -1,0 +1,88 @@
+---
+title: "Inc 5,000 Fastest Growing Companies Scrape"
+author: "Christian Thieme"
+date: "2/11/2021"
+output: rmdformats::robobook
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Using `rvest` and `xml2` to Scrape Top 5000 Fastest Growing Companies Data
+
+The website [Inc. 5000](https://www.inc.com/inc5000/2020) has a list of the top 5,000 fastest growing private companies from 2020. I will use `xml2` and `rvest` to scrape the data from the website.
+
+First, I'll import the necessary packages for the scrape.
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(tibble)
+library(xml2)
+library(rvest)
+```
+
+Next, I'll build a scraper function that will scrape each of the attributes from the page that I need for my dataset.
+
+```{r}
+
+url <- 'https://www.inc.com/inc5000/2020'
+
+scraper_func <- function(x) {
+  
+  web_page <- xml2::read_html(x)
+  
+  rank <- web_page %>% rvest::html_nodes("div.rank") %>%
+    html_text()
+  company <- web_page %>% rvest::html_nodes("div.company") %>%
+    html_text()
+  growth <- web_page %>% rvest::html_nodes("div.growth") %>%
+    html_text()
+  
+  industry_1 <- web_page %>% rvest::html_nodes("div.industry") %>%
+    html_text()
+  industry <- industry_1[2:length(industry_1)]
+  
+  state_1 <- web_page %>% rvest::html_nodes("div.state") %>%
+    html_text()
+  state <- state_1[2:length(state_1)]
+  
+  city <- web_page %>% rvest::html_nodes("div.city") %>%
+    html_text()
+  
+  df <- cbind(rank, company, growth, industry, state, city)
+  
+  final_df <- as_tibble(df)
+
+  return(final_df)
+
+}
+
+inc_2020_scrape <- scraper_func(url)
+```
+
+In working with this scrape, I found several instances where they had duplicated a number in their rank instead of going to the next number. As you can see in the image below, the rank is duplicated, but the company and all other information are different.
+
+![](dupes.jpg)
+
+Because of this problem we actually have 5,004 companies in this dataset.
+
+```{r}
+inc_2020 <- inc_2020_scrape[-1,]
+inc_2020 <- inc_2020 %>%
+  mutate(rank = dplyr::row_number()) %>%
+  mutate(growth = str_replace(growth, '%','')) %>%
+  mutate(growth = str_replace(growth, ',','')) %>%
+  mutate(growth = as.integer(growth)/100)
+
+names(inc_2020) <- c('Rank', 'Company', 'Growth', 'Industry', 'State', 'City')
+```
+
+Now that we have our dataset, let's preview it:
+
+```{r}
+inc <- tibble::as_tibble(inc_2020)
+inc
+```
+
+As you can see, with a `rvest` and `xml2` in just a few lines of code, we can easily and efficiently scrape 5,000+ rows of data in seconds.

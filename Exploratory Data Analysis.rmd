@@ -1,0 +1,155 @@
+---
+title: "Data-Ink Ratio Exercise with ggplot2"
+author: "Christian Thieme"
+date: "2/10/2021"
+output: rmdformats::robobook
+---
+
+**Principles of Data Visualization and Introduction to ggplot2**
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE
+)
+
+library(tidyverse)
+library(scales)
+```
+
+I have provided you with data about the 5,000 fastest growing companies in the US, as compiled by Inc. magazine. lets read this in:
+
+```{r}
+inc <- read.csv("https://raw.githubusercontent.com/charleyferrari/CUNY_DATA_608/master/module1/Data/inc5000_data.csv", header= TRUE)
+```
+
+And lets preview this data:
+
+```{r}
+inc <- dplyr::as_tibble(inc)
+head(inc)
+```
+
+```{r}
+summary(inc)
+```
+
+Think a bit on what these summaries mean. Use the space below to add some more relevant non-visual exploratory information you think helps you understand this data:
+
+*I'll keep this section relatively short, as experience has taught me that numeric summaries, like the ones above, can be misleading without visualizing the data as well*.
+
+*I am curious to see how many companies are in each industry, the industries with the highest median growth rates, as well as the aggregated revenue from each industry.*
+
+```{r message=FALSE, warning=FALSE}
+# Insert your code here, create more chunks as necessary
+inc %>%
+  dplyr::select(Industry, Revenue, Growth_Rate) %>%
+  dplyr::group_by(Industry) %>%
+  dplyr::summarize(
+    Count = n(),
+    '%' = round(n()/nrow(.),2),
+    Total_Revenue = sum(Revenue),
+    Mdn_Growth_Rate = median(Growth_Rate)
+  ) %>%
+  dplyr::arrange(desc(Mdn_Growth_Rate)) 
+
+```
+
+*Interestingly, it looks like Government Services has the highest median growth rate, followed by Energy and Real Estate. It is also interesting that some of the faster growing companies are in industries which make up a relatively small percentage of companies in this list such as Energy, Real Estate, and Media. None of these industries are new, so there must have been something occurring at the time this data was gathered that would have fueled that growth.*
+
+## Question 1
+
+Create a graph that shows the distribution of companies in the dataset by State (ie how many are in each state). There are a lot of States, so consider which axis you should use. This visualization is ultimately going to be consumed on a 'portrait' oriented screen (ie taller than wide), which should further guide your layout choices.
+
+```{r fig.height=7, fig.width=5}
+
+inc %>% 
+  dplyr::select(State) %>%
+  dplyr::group_by(State) %>%
+  dplyr::count() %>%
+  ggplot() +
+    aes(x = reorder(State, n) , y = n, fill = n) +
+    geom_col(position = 'dodge') +
+    geom_text(aes(label = n), size = 3,  hjust=-0.10)+ 
+    labs(title = 'Number of Fastest Growing Companies by State') +
+    xlab('') + 
+    ylab('') + 
+    scale_fill_gradient(low = "indianred1", 
+                        high = "indianred4" 
+                         ) + 
+    coord_flip() +
+    theme(
+      panel.background = element_rect(fill = "white", color = NA),
+      axis.text.x = element_blank(), 
+      axis.ticks.x = element_blank(),
+      legend.position="none",
+      plot.margin=unit(c(.2,.5,.2,.2),"cm")
+    )
+```
+
+*We can see from the above visual, a substantial amount of the fastest growing companies come from California.*
+
+## Question 2
+
+Lets dig in on the state with the 3rd most companies in the data set. Imagine you work for the state and are interested in how many people are employed by companies in different industries. Create a plot that shows the average and/or median employment by industry for companies in this state (only use cases with full data, use R's `complete.cases()` function.) In addition to this, your graph should show how variable the ranges are, and you should deal with outliers.
+
+*In looking at the data, there are 12 rows with missing values in the Employees column. We'll filter these out using `tidyr::drop_na`, which will drop any rows with missing values. Outliers are an issue with this visual, however, as an employee of the state, we are more interested in general cases, not the outliers, so we'll exclude several outliers to make our plot readable.*
+
+```{r fig.height=6, fig.width=8}
+for_box <- inc %>%
+  filter(State == 'NY') %>%
+  tidyr::drop_na()
+
+for_box %>%
+  ggplot() + 
+    aes(x = reorder(Industry, Employees, FUN = median), y = Employees) + 
+    geom_boxplot(color = 'steelblue', outlier.color = 'firebrick', outlier.alpha = 0.45) +
+    ylim(0,1250) +
+    xlab('') + 
+    ylab('') +
+    coord_flip() +
+    labs(title = "Number of Empolyees by Industry", caption = "*Outliers above 1,250 employees were excluded") +
+  theme_minimal() + 
+  theme(
+    plot.title = element_text(hjust = 0.15),
+    panel.grid.major.x =  element_line(color = "gray90", linetype = "dashed"),
+    panel.grid.minor.y = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    axis.ticks.x = element_line(color = "grey"),
+    plot.margin=unit(c(.2,.5,.2,.2),"cm")
+  )
+```
+
+*In looking at the box plots above, we can see that Environmental Services has the highest median number of employees out of all industries.*
+
+## Question 3
+
+Now imagine you work for an investor and want to see which industries generate the most revenue per employee. Create a chart that makes this information clear. Once again, the distribution per industry should be shown.
+
+*Here again we'll have an issue with outliers, however, as an investor we're interested in the overall health of the industry, not a one-off outlier, so excluding extreme outliers here will help us visualize our data better.*
+
+```{r fig.height=6, fig.width=8}
+for_box %>%
+  mutate(rev_per_emp = Revenue / Employees) %>%
+  filter(rev_per_emp <= 1750000) %>%
+  ggplot() +
+    aes(x = reorder(Industry, rev_per_emp, FUN = median), y = rev_per_emp) +
+    geom_boxplot(color = 'steelblue', outlier.color = 'firebrick', outlier.alpha = 0.45) +
+    xlab('') +
+    ylab('') +
+    coord_flip() +
+    labs(title = "Revenue per Employee by Industry", caption = "*Outliers above $1,750,000 were excluded") +
+    scale_y_continuous(labels=scales::dollar_format()) +
+  theme_minimal() +
+  theme(
+    panel.grid.major.x =  element_line(color = "gray90", linetype = "dashed"),
+    panel.grid.minor.y = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    axis.ticks.x = element_line(color = "grey"),
+    plot.margin=unit(c(.2,.5,.2,.2),"cm")
+  )
+
+```
+
+*Looking at the above plot as an investor, we can see that Logistics & Transportation is probably the best bet for our money. While it does have a wide range, the minimum revenue per employee is fairly high, the median value is the 3rd highest (almost tied for 2nd), and the higher end of the range is the highest of any industry, meaning there is a lot possibility.*
