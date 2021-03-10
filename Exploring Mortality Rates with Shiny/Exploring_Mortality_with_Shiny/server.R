@@ -21,6 +21,8 @@ shinyServer(function(input, output) {
             filter(Year == input$year) %>%
             filter(ICD.Chapter == input$cause) 
         
+        cdc_summed$State <- factor(cdc_summed$State, levels = unique(cdc_summed$State)[order(cdc_summed$Crude.Rate, decreasing = TRUE)])
+        
         fig <- plot_ly(
             data = cdc_summed, 
             x = ~State, y = ~Crude.Rate, type = 'bar', name = 'Mortality Rates'

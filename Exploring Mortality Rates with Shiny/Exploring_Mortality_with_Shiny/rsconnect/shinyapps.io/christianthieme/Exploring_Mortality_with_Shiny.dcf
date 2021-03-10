@@ -1,0 +1,12 @@
+name: Exploring_Mortality_with_Shiny
+title: Exploring_Mortality_with_Shiny
+username:
+account: christianthieme
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3766005
+bundleId: 4324265
+url: https://christianthieme.shinyapps.io/Exploring_Mortality_with_Shiny/
+when: 1615351944.85307
+asMultiple: FALSE
+asStatic: FALSE
