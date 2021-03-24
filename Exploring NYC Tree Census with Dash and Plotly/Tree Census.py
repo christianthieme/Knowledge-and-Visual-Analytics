@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import dash
+from dash.dependencies import Input, Output
 import dash_core_components as dcc 
 import dash_html_components as html 
 
@@ -30,13 +31,20 @@ for spec in df['spc_common'].unique():
 
 app.layout = html.Div([
     html.Div([
-    dcc.Dropdown(id = 'boro', options = boro_options,  multi=True, value = 'Brooklyn')],
-    style = {'width':'48%', 'display':'inline-block'}), 
+        dcc.Dropdown(id = 'boro', options = boro_options,  multi=True, value = 'Brooklyn')],
+        style = {'width':'48%', 'display':'inline-block'}), 
     html.Div([
-    dcc.Dropdown(id = 'species', options = species_options,  multi=True, value = 'Black Cherry')
-    ], style = {'width':'48%', 'display':'inline-block'})
+        dcc.Dropdown(id = 'species', options = species_options,  multi=True, value = 'American Beech')
+        ], style = {'width':'48%', 'display':'inline-block'}),
+    html.Div(
+        [dcc.Graph(id = 'graphic')], style = {'padding':10})
 ])
 
+@app.callback(Output('graphic', 'figure'), [Input('boro', 'value'), Input('species', 'value')])
+def update_graph(val_boro, val_species):
+    filtered_df = df[(df['boroname']==val_boro) & (df['spc_common']==val_species)]
+    grouped_df = filtered_df.groupby('health').sum()
+    return px.bar(grouped_df, x = grouped_df.index, y = 'count_tree_id')
 
 if __name__ == '__main__':
     app.run_server()
