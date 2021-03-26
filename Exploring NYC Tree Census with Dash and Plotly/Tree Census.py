@@ -27,7 +27,7 @@ steward_percent_df.sort_values(by = 'steward', inplace = True)
 
 
 app = dash.Dash()
-
+server = app.server
 
 app.layout = html.Div([
     html.Div([html.H1("New York Tree Health Dashboard", style = {'textAlign': 'center',
@@ -41,7 +41,7 @@ app.layout = html.Div([
                         style = {'textAlign': 'center',
                                 'color': '#FFFFFF',
                                 'fontSize': '16px'})                                
-                                 ], style = {'backgroundColor': '#1f3b4d',
+                                 ], style = {'backgroundColor': '#23704f',
                      'height': '200px',
                      'display': 'flex',
                      'flexDirection': 'column',
