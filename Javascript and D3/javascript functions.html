@@ -1,0 +1,88 @@
+<html>
+
+<head><title>Javascript Functions</title></head>
+<style>
+    h1 {background-color: #4CAF50;
+  color: white;}
+    table, td {
+  border-bottom: 1px solid #ddd;
+  font-size: 115%;
+  width:25%;
+}
+tr:nth-child(even) {background-color: #f2f2f2;}
+</style>
+
+<body>
+<H1>Javascript Functions</H1>
+<script type="text/javascript">
+
+// Here are some examples of things that you might want to do with Javascript
+
+// writing to a document directly
+
+document.write('<p><b>Enter a word below to see it written backwards:</b></p>');
+</script>
+
+<script type="text/javascript">
+
+// Find this bug in the console and fix it!
+function backwards(word){
+    return word.split("").reverse().join("");
+};
+
+function calc_backwards(){
+    var a = document.getElementById("backward-calc");
+    a.innerHTML = backwards(document.getElementById('text_input').value);
+}
+
+</script>
+
+<p>
+    <form>
+        <input id="text_input" type="text" size="35" value = "Enter text to reverse">
+        <input type="button" value="backward-ify" onClick="calc_backwards();">
+    </form>
+    </p>
+    
+    <div id="backward-calc"></div>
+
+<hr>
+
+<script type="text/javascript">
+
+document.write('<p><b>Input a number below and see the value printed in a table with first 20 multiples:</b></p>');
+
+function multiples_calculation(num){
+   return "<table><tr><td>" + 1*num + "</td><td>" + 2*num + "</td><td>" + 3*num + "</td><td>" + 4*num + "</td></tr>" +
+"<tr><td>" + 5*num +"</td><td>"+ 6*num +"</td><td>"+ 7*num +"</td><td>"+ 8*num +"</td></tr>" + 
+
+"<tr><td>"+ 9*num +"</td><td>"+ 10*num +"</td><td>"+ 11*num +"</td><td>"+ 12*num +"</td></tr>" + 
+
+"<tr><td>"+ 13*num +"</td><td>"+ 14*num +"</td><td>"+ 15*num +"</td><td>"+ 16*num +"</td></tr>" + 
+
+"<tr><td>"+ 17*num +"</td><td>"+ 18*num +"</td><td>"+ 19*num +"</td><td>"+ 20*num +"</td></tr></table>" 
+}
+
+function table_calc(){
+    var a = document.getElementById("table-calc");
+    a.innerHTML = multiples_calculation(document.getElementById('numeric_input').value);
+}
+
+</script>
+
+<p>
+    <form>
+        <input id="numeric_input" type="num" size="35" value = "Enter a number">
+        <input type="button" value="calculate" onClick="table_calc();">
+    </form>
+</p>
+    
+    <div id="table-calc"></div>
+
+
+
+
+
+
+</body>
+</html>

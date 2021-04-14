@@ -5,6 +5,7 @@ import dash
 from dash.dependencies import Input, Output
 import dash_core_components as dcc 
 import dash_html_components as html 
+import dash_bootstrap_components as dbc
 
 tree_health_by_boro_url = 'https://data.cityofnewyork.us/resource/uvpi-gqnh.json?' +\
         '$select=spc_common,boroname,steward,health,count(tree_id)' +\
@@ -26,7 +27,7 @@ steward_percent_df['steward'] = np.where(steward_percent_df['steward'] =='None',
 steward_percent_df.sort_values(by = 'steward', inplace = True)
 
 
-app = dash.Dash()
+app = dash.Dash(external_stylesheets=[dbc.themes.CYBORG])
 server = app.server
 
 app.layout = html.Div([
