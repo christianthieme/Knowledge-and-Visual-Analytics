@@ -217,85 +217,84 @@ def chicken_simulation_function(low_end_chickens, high_end_chickens, by_how_many
                                   yearly_high_end_egg_production)
             
             #storing output of food_consumption function
-    #         food_cost = food_consumption(chickens, days, bag_of_feed_cost, lbs_of_feed)
+            food_cost = food_consumption(chickens, days, bag_of_feed_cost, lbs_of_feed)
             
-    #         #storing output of bedding_cost function
-    #         bed_cost = bedding_cost(chickens, days, bag_of_bedding_cost, cubic_feet_of_bedding, low_end_days_to_refresh, 
-    #                                 high_end_days_to_refresh)
+            #storing output of bedding_cost function
+            bed_cost = bedding_cost(chickens, days, bag_of_bedding_cost, cubic_feet_of_bedding, low_end_days_to_refresh, 
+                                    high_end_days_to_refresh)
             
-    #         #calculating total cost
-    #         total_cost = food_cost + bed_cost + additional_cost
+            #calculating total cost
+            total_cost = food_cost + bed_cost + additional_cost
 
-    #         #calculating gross profit and appending to list
-    #         gross_profit = revenue - food_cost - bed_cost - additional_cost
-    #         gross_profit_amounts.append(gross_profit)
+            #calculating gross profit and appending to list
+            gross_profit = revenue - food_cost - bed_cost - additional_cost
+            gross_profit_amounts.append(gross_profit)
             
             #appending revenue, food cost, bed cost, and total cost to respective lists
             revenue_amounts.append(revenue)
-            
-    #         food_cost_amounts.append(food_cost)
-    #         bed_cost_amounts.append(bed_cost)
-    #         total_cost_amounts.append(total_cost)
+            food_cost_amounts.append(food_cost)
+            bed_cost_amounts.append(bed_cost)
+            total_cost_amounts.append(total_cost)
         
-    #     #dictionaries of values for each chicken
-    #     gp_dict[n_chickens] = gross_profit_amounts
+        #dictionaries of values for each chicken
+        gp_dict[n_chickens] = gross_profit_amounts
         rev_dict[n_chickens] = revenue_amounts
-    #     food_dict[n_chickens] = food_cost_amounts
-    #     bed_dict[n_chickens] = bed_cost_amounts
-    #     tot_cost_dict[n_chickens] = total_cost_amounts
+        food_dict[n_chickens] = food_cost_amounts
+        bed_dict[n_chickens] = bed_cost_amounts
+        tot_cost_dict[n_chickens] = total_cost_amounts
                
-    #     #lists of the averages
-    #     avg_gross_profit_amounts.append(np.average(gross_profit_amounts)), 
+        #lists of the averages
+        avg_gross_profit_amounts.append(np.average(gross_profit_amounts)) 
         avg_revenue_amounts.append(np.average(revenue_amounts))
-    #     avg_food_cost_amounts.append(np.average(food_cost_amounts)),
-    #     avg_bed_cost_amounts.append(np.average(bed_cost_amounts)),
-    #     avg_total_cost_amounts.append(np.average(total_cost_amounts))
+        avg_food_cost_amounts.append(np.average(food_cost_amounts))
+        avg_bed_cost_amounts.append(np.average(bed_cost_amounts))
+        avg_total_cost_amounts.append(np.average(total_cost_amounts))
         
-    #     #lists of the minimums
-    #     min_gross_profit_amounts.append(min(gross_profit_amounts)), 
-       # min_revenue_amounts.append(min(revenue_amounts)),
-    #     min_food_cost_amounts.append(min(food_cost_amounts)),
-    #     min_bed_cost_amounts.append(min(bed_cost_amounts)),
-    #     min_total_cost_amounts.append(min(total_cost_amounts))
+        #lists of the minimums
+        min_gross_profit_amounts.append(min(gross_profit_amounts)) 
+        min_revenue_amounts.append(min(revenue_amounts))
+        min_food_cost_amounts.append(min(food_cost_amounts))
+        min_bed_cost_amounts.append(min(bed_cost_amounts))
+        min_total_cost_amounts.append(min(total_cost_amounts))
         
-    #     #lists of the maximums
-    #     max_gross_profit_amounts.append(max(gross_profit_amounts)), 
-        #max_revenue_amounts.append(max(revenue_amounts)),
-    #     max_food_cost_amounts.append(max(food_cost_amounts)),
-    #     max_bed_cost_amounts.append(max(bed_cost_amounts)),
-    #     max_total_cost_amounts.append(max(total_cost_amounts))
+        #lists of the maximums
+        max_gross_profit_amounts.append(max(gross_profit_amounts)) 
+        max_revenue_amounts.append(max(revenue_amounts))
+        max_food_cost_amounts.append(max(food_cost_amounts))
+        max_bed_cost_amounts.append(max(bed_cost_amounts))
+        max_total_cost_amounts.append(max(total_cost_amounts))
         
-    #     #lists of the variances
-    #     var_gross_profit_amounts.append(np.var(gross_profit_amounts)), 
-        #var_revenue_amounts.append(np.var(revenue_amounts)),
-    #     var_food_cost_amounts.append(np.var(food_cost_amounts)),
-    #     var_bed_cost_amounts.append(np.var(bed_cost_amounts)),
-    #     var_total_cost_amounts.append(np.var(total_cost_amounts))
+        #lists of the variances
+        var_gross_profit_amounts.append(np.var(gross_profit_amounts)) 
+        var_revenue_amounts.append(np.var(revenue_amounts))
+        var_food_cost_amounts.append(np.var(food_cost_amounts))
+        var_bed_cost_amounts.append(np.var(bed_cost_amounts))
+        var_total_cost_amounts.append(np.var(total_cost_amounts))
         
-    # #list of dictionaries    
-    # dictionary_list = [gp_dict, rev_dict, food_dict, bed_dict, tot_cost_dict]
+    #list of dictionaries    
+    dictionary_list = [gp_dict, rev_dict, food_dict, bed_dict, tot_cost_dict]
     
-    # #the below data frame aggregates all of the lists collected above to return in a simple format that can be analyzed.  
-    # chicken_df = pd.DataFrame(list(zip(avg_gross_profit_amounts, avg_revenue_amounts, avg_food_cost_amounts,
-    #                                    avg_bed_cost_amounts, avg_total_cost_amounts, min_gross_profit_amounts, 
-    #                                    min_revenue_amounts,min_food_cost_amounts,min_bed_cost_amounts, 
-    #                                    min_total_cost_amounts, max_gross_profit_amounts, max_revenue_amounts, 
-    #                                    max_food_cost_amounts, max_bed_cost_amounts, max_total_cost_amounts, 
-    #                                    var_gross_profit_amounts, var_revenue_amounts, var_food_cost_amounts, 
-    #                                    var_bed_cost_amounts, var_total_cost_amounts)),
-    #                           columns = ['avg_gross_profit_amounts', 'avg_revenue_amounts', 'avg_food_cost_amounts', 
-    #                                      'avg_bed_cost_amounts', 'avg_total_cost_amounts', 'min_gross_profit_amounts', 
-    #                                    'min_revenue_amounts','min_food_cost_amounts','min_bed_cost_amounts', 
-    #                                    'min_total_cost_amounts', 'max_gross_profit_amounts', 'max_revenue_amounts', 
-    #                                    'max_food_cost_amounts', 'max_bed_cost_amounts','max_total_cost_amounts', 
-    #                                      'var_gross_profit_amounts', 'var_revenue_amounts', 'var_food_cost_amounts',
-    #                                      'var_bed_cost_amounts', 'var_total_cost_amounts'])
-    # chicken_df.index = chicken_df.index + low_end_chickens
-    # chicken_df.index.name = '# of Chickens'
+    #the below data frame aggregates all of the lists collected above to return in a simple format that can be analyzed.  
+    chicken_df = pd.DataFrame(list(zip(avg_gross_profit_amounts, avg_revenue_amounts, avg_food_cost_amounts,
+                                       avg_bed_cost_amounts, avg_total_cost_amounts, min_gross_profit_amounts, 
+                                       min_revenue_amounts,min_food_cost_amounts,min_bed_cost_amounts, 
+                                       min_total_cost_amounts, max_gross_profit_amounts, max_revenue_amounts, 
+                                       max_food_cost_amounts, max_bed_cost_amounts, max_total_cost_amounts, 
+                                       var_gross_profit_amounts, var_revenue_amounts, var_food_cost_amounts, 
+                                       var_bed_cost_amounts, var_total_cost_amounts)),
+                              columns = ['avg_gross_profit_amounts', 'avg_revenue_amounts', 'avg_food_cost_amounts', 
+                                         'avg_bed_cost_amounts', 'avg_total_cost_amounts', 'min_gross_profit_amounts', 
+                                       'min_revenue_amounts','min_food_cost_amounts','min_bed_cost_amounts', 
+                                       'min_total_cost_amounts', 'max_gross_profit_amounts', 'max_revenue_amounts', 
+                                       'max_food_cost_amounts', 'max_bed_cost_amounts','max_total_cost_amounts', 
+                                         'var_gross_profit_amounts', 'var_revenue_amounts', 'var_food_cost_amounts',
+                                         'var_bed_cost_amounts', 'var_total_cost_amounts'])
+    chicken_df.index = chicken_df.index + low_end_chickens
+    chicken_df.index.name = '# of Chickens'
     
     #returns both the data frame containing all the summarized data as well as a dictionary with all of the detailed data
     #from each simulation run
-    return avg_revenue_amounts  #chicken_df, dictionary_list
+    return chicken_df, dictionary_list
 
 # ---------------------------------------- Building the Simulation App ---------------------------------------------------------------------------------------#
 
@@ -304,11 +303,12 @@ st.subheader("Organic Egg Sales Simulation to Maximize Gross Profit")
 
 st.sidebar.header("Simulation Parameters:")
 values = st.sidebar.slider("Range of Chickens to Iterate Over:", 1,50,(5,25))
+simulation_runs = st.sidebar.slider("How Many Simulations per Chicken?:", 1,1000)
 
-df = chicken_simulation_function(low_end_chickens = values[0], 
+df, dict_list = chicken_simulation_function(low_end_chickens = values[0], 
                                             high_end_chickens = values[1], 
-                                            by_how_many_chickens = 50 , 
-                                            days = 90, 
+                                            by_how_many_chickens = 3 , 
+                                            days = 10, 
                                             sale_price = 4.25,
                                             cost_of_carton = 0.29, 
                                             yearly_low_end_egg_production = 235,
@@ -320,7 +320,7 @@ df = chicken_simulation_function(low_end_chickens = values[0],
                                             low_end_days_to_refresh = 28,
                                             high_end_days_to_refresh = 32, 
                                             additional_cost = 0, 
-                                            simulations_per_chicken = 1)
-
+                                            simulations_per_chicken = simulation_runs)
+#st.write(df.index)
 st.write(df)
 
