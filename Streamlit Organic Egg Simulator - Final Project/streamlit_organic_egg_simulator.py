@@ -135,7 +135,7 @@ def bedding_cost(chickens, days, bag_of_bedding_cost, cubic_feet_of_bedding, low
     return round(bag_of_bedding_cost * (times_to_refresh_bedding + feet_from_chickens),2) #returns cost of bedding
 
 
-def chicken_simulation_function(low_end_chickens, high_end_chickens, by_how_many_chickens, days, 
+def chicken_simulation_function(low_end_chickens, high_end_chickens, days, 
                                 sale_price, cost_of_carton, yearly_low_end_egg_production, yearly_high_end_egg_production,
                                 bag_of_feed_cost, lbs_of_feed, bag_of_bedding_cost, cubic_feet_of_bedding, 
                                 low_end_days_to_refresh, high_end_days_to_refresh, additional_cost,
@@ -161,7 +161,7 @@ def chicken_simulation_function(low_end_chickens, high_end_chickens, by_how_many
     #simulations_per_chicken - how many simulations per chicken should be run (i.e. 100 simulations)
     
 
-    chickens_to_sweep = np.linspace(low_end_chickens,high_end_chickens, by_how_many_chickens)   
+    chickens_to_sweep = np.linspace(low_end_chickens,high_end_chickens)   
     #an array holding the values of the chicken range (i.e. 15-25 chickens)
     
     #lists to hold avg, min, max, and var of the gross profit, revenue, food cost, bedding cost and total cost of the 
@@ -307,7 +307,6 @@ simulation_runs = st.sidebar.slider("How Many Simulations per Chicken?:", 1,1000
 
 df, dict_list = chicken_simulation_function(low_end_chickens = values[0], 
                                             high_end_chickens = values[1], 
-                                            by_how_many_chickens = 3 , 
                                             days = 10, 
                                             sale_price = 4.25,
                                             cost_of_carton = 0.29, 
