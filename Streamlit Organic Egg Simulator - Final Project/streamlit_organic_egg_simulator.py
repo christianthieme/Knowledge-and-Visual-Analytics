@@ -4,11 +4,12 @@ import pandas as pd
 import math
 import matplotlib.pyplot as plt
 from scipy import stats
+import plotly.express as px
 
 # --------------------------------------------- Functions Needed for Simulation ---------------------------------------------------------------------------# 
 
 #egg_revenue funtion will be a function that returns the revenue from selling x dozen eggs at x price, laid by x chickens 
-@st.cache
+#@st.cache
 def egg_revenue(chickens, days, sale_price, cost_of_carton, yearly_low_end_egg_production, yearly_high_end_egg_production): 
     
     #chickens - number of chickens in the flock
@@ -63,7 +64,7 @@ def egg_revenue(chickens, days, sale_price, cost_of_carton, yearly_low_end_egg_p
 
 
 #food_consumption function will calculate how much cost is incurred by feeding x amount of birds based on the cost of the feed and how many lbs were purchased
-@st.cache
+#@st.cache
 def food_consumption(chickens, days, bag_of_feed_cost, lbs_of_feed):
     
     #chickens - number of chickens in the flock
@@ -89,7 +90,7 @@ def food_consumption(chickens, days, bag_of_feed_cost, lbs_of_feed):
 #bedding_cost function will calculate the cost incurred from having to change the nesting bedding. The function
 #assumes the bedding needs to be changed every 27-31 days and the number of chickens you have affects how much bedding
 #you need
-@st.cache
+#@st.cache
 def bedding_cost(chickens, days, bag_of_bedding_cost, cubic_feet_of_bedding, low_end_days_to_refresh, 
                  high_end_days_to_refresh):
     
@@ -135,7 +136,7 @@ def bedding_cost(chickens, days, bag_of_bedding_cost, cubic_feet_of_bedding, low
     return round(bag_of_bedding_cost * (times_to_refresh_bedding + feet_from_chickens),2) #returns cost of bedding
 
 
-def chicken_simulation_function(low_end_chickens, high_end_chickens, days, 
+def chicken_simulation_function(low_end_chickens, high_end_chickens, by_how_many_chickens, days, 
                                 sale_price, cost_of_carton, yearly_low_end_egg_production, yearly_high_end_egg_production,
                                 bag_of_feed_cost, lbs_of_feed, bag_of_bedding_cost, cubic_feet_of_bedding, 
                                 low_end_days_to_refresh, high_end_days_to_refresh, additional_cost,
@@ -161,7 +162,7 @@ def chicken_simulation_function(low_end_chickens, high_end_chickens, days,
     #simulations_per_chicken - how many simulations per chicken should be run (i.e. 100 simulations)
     
 
-    chickens_to_sweep = np.linspace(low_end_chickens,high_end_chickens)   
+    chickens_to_sweep = np.linspace(low_end_chickens,high_end_chickens, by_how_many_chickens)   
     #an array holding the values of the chicken range (i.e. 15-25 chickens)
     
     #lists to hold avg, min, max, and var of the gross profit, revenue, food cost, bedding cost and total cost of the 
@@ -212,6 +213,7 @@ def chicken_simulation_function(low_end_chickens, high_end_chickens, days,
 
             chickens = int(n_chickens)
         
+
             #storing output of egg_revenue function
             revenue = egg_revenue(chickens, days, sale_price, cost_of_carton, yearly_low_end_egg_production,
                                   yearly_high_end_egg_production)
@@ -297,29 +299,53 @@ def chicken_simulation_function(low_end_chickens, high_end_chickens, days,
     return chicken_df, dictionary_list
 
 # ---------------------------------------- Building the Simulation App ---------------------------------------------------------------------------------------#
-
+st. set_page_config(layout="wide")
 st.title("How Many Chickens Should I Have?")
-st.subheader("Organic Egg Sales Simulation to Maximize Gross Profit")
+#st.header("Organic Egg Sales Simulation to Maximize Gross Profit")
+
+col1, col2 = st.beta_columns(2)
+with col1: 
+    st.subheader("About this app")
 
 st.sidebar.header("Simulation Parameters:")
+st.sidebar.image('https://media.istockphoto.com/photos/portrait-of-a-funny-chicken-closeup-isolated-on-white-background-picture-id1132026121?k=6&m=1132026121&s=612x612&w=0&h=B1TjA88Qd5CtpC2NczetV86LR2qYImqMOb9C9OE34P0=')
+
+
 values = st.sidebar.slider("Range of Chickens to Iterate Over:", 1,50,(5,25))
-simulation_runs = st.sidebar.slider("How Many Simulations per Chicken?:", 1,1000)
+simulation_runs = st.sidebar.slider("Simulations per Chicken:", 1,100) #capping at 100 so user experience isn't poor
+days_to_simulate = st.sidebar.slider("Days to Run the Simulation Over:", 30,90) # simulating anywhere from a month to 
+dozen_price = st.sidebar.number_input("Sale Price of a Dozen Eggs:", value = 4.25)
+carton_cost = st.sidebar.number_input("Cost of Carton:", value = 0.29)
+egg_production = st.sidebar.slider("Range of Yearly Egg Production:", 150,340,(235,275))
+feed_cost = st.sidebar.number_input("Cost of Feed:", value = 23.99)
+pounds_of_feed = st.sidebar.number_input("Pounds of Feed:", value = 35)
+bedding_bag_cost = st.sidebar.number_input("Cost of Bedding:", value = 8.79)
+cubic_feet_bedding = st.sidebar.number_input("Cubic Feet of Bedding:", value = 10)
+days_to_refresh = st.sidebar.slider("Range of Days to Refresh Bedding:", 5,40,(28,32))
+additional_costs = st.sidebar.number_input("Additional Costs:", value = 0)
+
 
 df, dict_list = chicken_simulation_function(low_end_chickens = values[0], 
-                                            high_end_chickens = values[1], 
-                                            days = 10, 
-                                            sale_price = 4.25,
-                                            cost_of_carton = 0.29, 
-                                            yearly_low_end_egg_production = 235,
-                                            yearly_high_end_egg_production = 275,
-                                            bag_of_feed_cost = 23.99, 
-                                            lbs_of_feed = 35, 
-                                            bag_of_bedding_cost = 8.79, 
-                                            cubic_feet_of_bedding = 10, 
-                                            low_end_days_to_refresh = 28,
-                                            high_end_days_to_refresh = 32, 
-                                            additional_cost = 0, 
+                                            high_end_chickens = values[1],
+                                            by_how_many_chickens = (values[1]- values[0])+1,
+                                            days = days_to_simulate, 
+                                            sale_price = dozen_price,
+                                            cost_of_carton = carton_cost, 
+                                            yearly_low_end_egg_production = egg_production[0],
+                                            yearly_high_end_egg_production = egg_production[1],
+                                            bag_of_feed_cost = feed_cost, 
+                                            lbs_of_feed = pounds_of_feed, 
+                                            bag_of_bedding_cost = bedding_bag_cost, 
+                                            cubic_feet_of_bedding = cubic_feet_bedding, 
+                                            low_end_days_to_refresh = days_to_refresh[0],
+                                            high_end_days_to_refresh = days_to_refresh[1], 
+                                            additional_cost = additional_costs, 
                                             simulations_per_chicken = simulation_runs)
 #st.write(df.index)
-st.write(df)
+
+with col2: 
+    st.markdown("### **Minimum, Average, and Maximum Gross Profit Amounts**")
+    st.plotly_chart(px.line(df, x = df.index, y = [df['avg_gross_profit_amounts'], df['min_gross_profit_amounts'], df['max_gross_profit_amounts']]), use_container_width= True)
+    st.markdown("### **Minimum, Average, and Maximum Revenue Amounts**")
+    st.plotly_chart(px.line(df, x = df.index, y = [df['avg_revenue_amounts'], df['min_revenue_amounts'], df['max_revenue_amounts']]), use_container_width= True)
 
