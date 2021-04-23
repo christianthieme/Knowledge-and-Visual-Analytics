@@ -312,7 +312,7 @@ st.sidebar.image('https://media.istockphoto.com/photos/portrait-of-a-funny-chick
 
 
 values = st.sidebar.slider("Range of Chickens to Iterate Over:", 1,50,(5,25))
-simulation_runs = st.sidebar.slider("Simulations per Chicken:", 1,100) #capping at 100 so user experience isn't poor
+simulation_runs = st.sidebar.slider("Simulations per Chicken:", 1,100, value = 10) #capping at 100 so user experience isn't poor
 days_to_simulate = st.sidebar.slider("Days to Run the Simulation Over:", 30,90) # simulating anywhere from a month to 
 dozen_price = st.sidebar.number_input("Sale Price of a Dozen Eggs:", value = 4.25)
 carton_cost = st.sidebar.number_input("Cost of Carton:", value = 0.29)
@@ -345,7 +345,9 @@ df, dict_list = chicken_simulation_function(low_end_chickens = values[0],
 
 with col2: 
     st.markdown("### **Minimum, Average, and Maximum Gross Profit Amounts**")
-    st.plotly_chart(px.line(df, x = df.index, y = [df['avg_gross_profit_amounts'], df['min_gross_profit_amounts'], df['max_gross_profit_amounts']]), use_container_width= True)
+    fig = px.line(df, x = df.index, y = [df['max_gross_profit_amounts'], df['avg_gross_profit_amounts'], df['min_gross_profit_amounts']], labels = dict(value = '$ of Gross Profit', variable = ''))
+    fig.update_layout({'plot_bgcolor':'rgba(0,0,0,0)'})
+    st.plotly_chart(fig, use_container_width= True)
     st.markdown("### **Minimum, Average, and Maximum Revenue Amounts**")
-    st.plotly_chart(px.line(df, x = df.index, y = [df['avg_revenue_amounts'], df['min_revenue_amounts'], df['max_revenue_amounts']]), use_container_width= True)
+    st.plotly_chart(px.line(df, x = df.index, y = [df['max_revenue_amounts'], df['avg_revenue_amounts'], df['min_revenue_amounts']]), use_container_width= True)
 
