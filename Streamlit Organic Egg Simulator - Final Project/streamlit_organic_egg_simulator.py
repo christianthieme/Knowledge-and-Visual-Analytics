@@ -5,6 +5,7 @@ import math
 import matplotlib.pyplot as plt
 from scipy import stats
 import plotly.express as px
+import base64
 
 # --------------------------------------------- Functions Needed for Simulation ---------------------------------------------------------------------------# 
 
@@ -295,6 +296,15 @@ def chicken_simulation_function(low_end_chickens, high_end_chickens, by_how_many
     #from each simulation run
     return chicken_df, dictionary_list
 
+#Function to make entire function results downloadable to CSV
+def make_downloadable(data):
+    csvfile = data.to_csv(index = False)
+    b64 = base64.b64encode(csvfile.encode()).decode()  # some strings <-> bytes conversions necessary here
+    st.markdown("Download the full dataset from the entire model for futher analysis:")
+    new_filename = 'Chicken Simulation'
+    href = f'<a href="data:file/csv;base64,{b64}" download="{new_filename}.csv">Download CSV</a>'
+    st.markdown(href, unsafe_allow_html=True)
+
 # ---------------------------------------- Building the Simulation App ---------------------------------------------------------------------------------------#
 
 #Setting page configuration to wide
@@ -446,3 +456,6 @@ with col3:
    # bep.reset_index(inplace = True)
     st.markdown("If you wanted to have the least amount of chickens possible and still break even, you should have **{}** chickens. The below table shows additional break even points: ".format(bep['# of Chickens'].head(1)[0]))
     st.write(bep)
+
+    st.markdown(" ")
+    make_downloadable(df)
