@@ -306,156 +306,159 @@ def make_downloadable(data):
     st.markdown(href, unsafe_allow_html=True)
 
 # ---------------------------------------- Building the Simulation App ---------------------------------------------------------------------------------------#
-
+def main():
 #Setting page configuration to wide
-st. set_page_config(layout="wide", page_title = "Chicken Simulation")
-st.markdown("# How Many Chickens Should I Have? :chicken:")
+    st. set_page_config(layout="wide", page_title = "Chicken Simulation")
+    st.markdown("# How Many Chickens Should I Have? :chicken:")
 
-#Creating a 3 column layout, will only use 1 and 3 and 2 will be for spacing between columns
-col1, col2, col3 = st.beta_columns([1.25,.15,2])
+    #Creating a 3 column layout, will only use 1 and 3 and 2 will be for spacing between columns
+    col1, col2, col3 = st.beta_columns([1.25,.15,2])
 
-#---------------------------------- Main Text Section -------------------------------------------------------------#
-with col1: 
-    st.markdown("### **Introduction** :wave:")
-    st.write("Over the past decade, the desire for organic food has grown exponentially. As demand increases, many people wonder what it takes to produce and sell their own organic food. Raising laying hens to sell organic eggs is one of the easiest ways to break into this area. Chickens are low maintenance and fairly cheap to care for as well. Before jumping in it's worth looking to see if you would be able to break even or turn a profit. There are quite a few variables to account for, and having the wrong quantity of laying hens can negatively affect your profit.")
-    st.markdown("### **Why Simulation** :question:")
-    st.markdown("When it comes to chickens, nothing is certain. For example, organic chickens generally don't lay an egg every day, they don't eat the same amount of food every day, and will need to have their bedding changed when it is soiled, which may not happen at the same interval every time. When running a side business with lower margins, simulation works better than *manual calculations*, because we can use probability distributions to model each of these variables and run the simulation many times to analyze how much variance there is with the profits (by looking at average, maximum, and minimum values). Then, based on our risk profile, we can make the most informed decision.")
-    st.markdown("### **What are the Variables?** :gear:")
-    st.markdown("For the *casual hen owner (1-50 chickens)* looking to sell eggs, there are really three areas of interest that need to be accounted for:")
+    #---------------------------------- Main Text Section -------------------------------------------------------------#
+    with col1: 
+        st.markdown("### **Introduction** :wave:")
+        st.write("Over the past decade, the desire for organic food has grown exponentially. As demand increases, many people wonder what it takes to produce and sell their own organic food. Raising laying hens to sell organic eggs is one of the easiest ways to break into this area. Chickens are low maintenance and fairly cheap to care for as well. Before jumping in it's worth looking to see if you would be able to break even or turn a profit. There are quite a few variables to account for, and having the wrong quantity of laying hens can negatively affect your profit.")
+        st.markdown("### **Why Simulation** :question:")
+        st.markdown("When it comes to chickens, nothing is certain. For example, organic chickens generally don't lay an egg every day, they don't eat the same amount of food every day, and will need to have their bedding changed when it is soiled, which may not happen at the same interval every time. When running a side business with lower margins, simulation works better than *manual calculations*, because we can use probability distributions to model each of these variables and run the simulation many times to analyze how much variance there is with the profits (by looking at average, maximum, and minimum values). Then, based on our risk profile, we can make the most informed decision.")
+        st.markdown("### **What are the Variables?** :gear:")
+        st.markdown("For the *casual hen owner (1-50 chickens)* looking to sell eggs, there are really three areas of interest that need to be accounted for:")
+        
+        st.markdown("* **Revenue** - How much money do you make from the sale of dozens of eggs?\n* **Feed Cost** - The cost of feeding your chickens\n* **Bedding Cost** - The cost of buying and replacing bedding that periodically gets soiled")
+        st.markdown("### **How It Works** :hammer:")
+        st.markdown("We model the variables above individually using probability distributions based on the input from the user in the **Simulation Parameter** pane :arrow_left:. Below is a general outline of the questions that need to be answered for each variable: ")
+        st.markdown("**General** :rooster:")
+        st.markdown("* How many chickens are in the flock? (simulate a range to find the optimal value) \n* How many days we want to simulate (i.e. 31 for a month, 60 for two months, 90 for a quarter)\n")
+        st.markdown("**Revenue** :moneybag:")
+        st.markdown("* How much can we sell a dozen organic eggs for?\n* How much does each individual egg carton cost (i.e. $0.23/carton)\n* What is the low and high end of egg production per year for the type of hens you have? Most birds lay between 235 to 275 eggs a year")
+        st.markdown("**Feed Cost** :stew:")
+        st.markdown("* The cost of a single bag of feed\n* How many pounds of feed are in a single bag\n* How much feed does a single chicken consume on a given day?")
+        st.markdown("**Bedding Cost** :bed:")
+        st.markdown("* The cost of a single bag of bedding\n* The cubic feet of bedding in a single bag\n* How long does the bedding last before it is soiled?")
+        st.markdown("### **Putting It All Together** :building_construction:")
+        st.markdown("Finally, we can tie these models together and visualize :bar_chart: :arrow_right: the minimums, averages, and maximums of gross profit, revenue, and costs in order to make the best decision based on how averse to risk we are.")
+
+    # ------------------------------------------------- Sidebar Section -------------------------------------------------------------------------------------------#
+    st.sidebar.markdown("### Instructions:")
+    st.sidebar.write("Adjust the below inputs to see how different scenarios affect gross profit. Hover over the question mark *tooltips* for additional details about each input.")
+    #pulling chicken image
+    st.sidebar.image('https://media.istockphoto.com/photos/portrait-of-a-funny-chicken-closeup-isolated-on-white-background-picture-id1132026121?k=6&m=1132026121&s=612x612&w=0&h=B1TjA88Qd5CtpC2NczetV86LR2qYImqMOb9C9OE34P0=')
+    st.sidebar.markdown("### Simulation Parameters:")
+    #-------------------------------------------------Sliders and Input Values in Sidebar Section ----------------------------#
+    #Building Range of Chickens to Iterate Over Slider which allows for two values 
+    values = st.sidebar.slider("Range of Chickens to Iterate Over:", 1,50,(5,25), help="Input the range of chickens you are willing to have. The simulation will help you determine what the optimal value in this range is.")
+    #only allows for one value -- capping at 100 so user experience isn't poor
+    simulation_runs = st.sidebar.slider("Simulations per Chicken:", 1,100, value = 10, help="The benefit of running a simulation is you can run it many times to see what variability there is. We can run multiple simulations for each chicken in the range you've chosen. This will allow us to see many conceivable scenarios and then to choose the option that brings the higest value with the lowest risk. Increasing scenarios will increase the run time of the calculation.") 
+    # simulating anywhere from a month to full quarter -- longer affects user experience
+    days_to_simulate = st.sidebar.slider("Days to Run the Simulation Over:", 30,90, help = "How many days should we simulate? Do you want to see what gross profit looks like each month? Each quarter? Enter the value in days (i.e. 1 month = 31 days, 1 quarter = 90 days). Increasing this value will increase the run time of the calculation.") 
+    #number input for price you will sell a dozen eggs for
+    dozen_price = st.sidebar.number_input("Sale Price of a Dozen Eggs:", value = 4.25, help = "How much do you plan to sell a dozen eggs for?")
+    #the actual cost of the carton you will be selling the eggs in
+    carton_cost = st.sidebar.number_input("Cost of Carton:", value = 0.29, help = "You are packaging the dozen eggs you are selling in a carton. How much does each individual carton cost you?")
+    #chickens have a range of eggs they'll produce based on breed, this input allows you to play with that
+    egg_production = st.sidebar.slider("Range of Yearly Egg Production:", 150,340,(235,275), help = "What is the low end and high end of egg production per year for the type of hens you have? Most birds lay between 235 to 275 eggs a year. You can google the type of hens you plan to have and find a reasonable estimate.")
+    #input allowing you to specify your feed cost
+    feed_cost = st.sidebar.number_input("Cost of Feed:", value = 23.99, help = "How much does a single bag of feed cost you?")
+    #input allowing you to specify you much feed you bought in pounds
+    pounds_of_feed = st.sidebar.number_input("Pounds of Feed:", value = 35, help = "How many pounds of feed are in the bag you purchased?")
+    #number input allowing you to change the cost of a bag of bedding
+    bedding_bag_cost = st.sidebar.number_input("Cost of Bedding:", value = 8.79, help = "How much does a bag of bedding cost?")
+    #number input to specify how much bedding you bought in cubic feet
+    cubic_feet_bedding = st.sidebar.number_input("Cubic Feet of Bedding:", value = 10, help = "How many cubic feet are in the bag of bedding you purchased?")
+    #how often in days you will fresh the bedding
+    days_to_refresh = st.sidebar.slider("Range of Days to Refresh Bedding:", 5,40,(28,32), help = "How often will you need to change the bedding?")
+    #additional costs over the time period you've selected
+    additional_costs = st.sidebar.number_input("Additional Costs:", value = 0, help = "Any additional costs can be entered here. For example if you are providing vitamins, meal worms, etc.")
+
+    st.sidebar.markdown(' ')
+    st.sidebar.markdown(' ')
+    st.sidebar.markdown(' ')
+    st.sidebar.markdown("*This app was built by Christian Thieme using Python and Streamlit*")
+    #----------------------------------------------------Running the Simulation Based on User Input or Default Values ----------------------------------------#
+
+    #Running chicken_simulation_function based on input values from the user (or defaul values)
+
+    #I use the values from the sliders and number inputs to feed my function that runs all of the simulations 
+    #each time an input is changed, the function reruns
+    df, dict_list = chicken_simulation_function(low_end_chickens = values[0], 
+                                                high_end_chickens = values[1],
+                                                by_how_many_chickens = (values[1]- values[0])+1,
+                                                days = days_to_simulate, 
+                                                sale_price = dozen_price,
+                                                cost_of_carton = carton_cost, 
+                                                yearly_low_end_egg_production = egg_production[0],
+                                                yearly_high_end_egg_production = egg_production[1],
+                                                bag_of_feed_cost = feed_cost, 
+                                                lbs_of_feed = pounds_of_feed, 
+                                                bag_of_bedding_cost = bedding_bag_cost, 
+                                                cubic_feet_of_bedding = cubic_feet_bedding, 
+                                                low_end_days_to_refresh = days_to_refresh[0],
+                                                high_end_days_to_refresh = days_to_refresh[1], 
+                                                additional_cost = additional_costs, 
+                                                simulations_per_chicken = simulation_runs)
+
+    #Building columns needed for optimal chicken calc and break even calc
+    df['answer'] = df['min_gross_profit_amounts'] + df['avg_gross_profit_amounts'] + df['max_gross_profit_amounts']
+    df['break_even'] = df["min_revenue_amounts"] - df["max_total_cost_amounts"] 
+
+    #------------------------------------ Visualization Pane on the far right which has values from Simulation Run ------------------------------------------#
+    with col3: 
+        st.markdown("### **The Answer** :hatching_chick:")
+        #finding the optimal amount of chickens
+        optimal_chickens = df['answer'].idxmax() 
+
+        #Getting the range of Gross Profit Values for the optimal chicken value
+        min_gross_profit = df.iloc[optimal_chickens-values[0]]['min_gross_profit_amounts']
+        max_gross_profit = df.iloc[optimal_chickens-values[0]]['max_gross_profit_amounts']
+
+        
+        st.markdown("Based on your inputs, you should have **{}** chickens. This number has the highest probability of maximizing gross profit in all scenarios. You can expect to earn between **${}** and **${}** of gross profit every **{}** days.".format(optimal_chickens,round(min_gross_profit,2),round(max_gross_profit,2), days_to_simulate ))
     
-    st.markdown("* **Revenue** - How much money do you make from the sale of dozens of eggs?\n* **Feed Cost** - The cost of feeding your chickens\n* **Bedding Cost** - The cost of buying and replacing bedding that periodically gets soiled")
-    st.markdown("### **How It Works** :hammer:")
-    st.markdown("We model the variables above individually using probability distributions based on the input from the user in the **Simulation Parameter** pane :arrow_left:. Below is a general outline of the questions that need to be answered for each variable: ")
-    st.markdown("**General** :rooster:")
-    st.markdown("* How many chickens are in the flock? (simulate a range to find the optimal value) \n* How many days we want to simulate (i.e. 31 for a month, 60 for two months, 90 for a quarter)\n")
-    st.markdown("**Revenue** :moneybag:")
-    st.markdown("* How much can we sell a dozen organic eggs for?\n* How much does each individual egg carton cost (i.e. $0.23/carton)\n* What is the low and high end of egg production per year for the type of hens you have? Most birds lay between 235 to 275 eggs a year")
-    st.markdown("**Feed Cost** :stew:")
-    st.markdown("* The cost of a single bag of feed\n* How many pounds of feed are in a single bag\n* How much feed does a single chicken consume on a given day?")
-    st.markdown("**Bedding Cost** :bed:")
-    st.markdown("* The cost of a single bag of bedding\n* The cubic feet of bedding in a single bag\n* How long does the bedding last before it is soiled?")
-    st.markdown("### **Putting It All Together** :building_construction:")
-    st.markdown("Finally, we can tie these models together and visualize :bar_chart: :arrow_right: the minimums, averages, and maximums of gross profit, revenue, and costs in order to make the best decision based on how averse to risk we are.")
+        #Gross Profit Chart
+        st.markdown("### **Gross Profit Analysis**")
+        fig = px.line(df, x = df.index, y = [df['max_gross_profit_amounts'], df['avg_gross_profit_amounts'], df['min_gross_profit_amounts']], labels = dict(value = '$ Gross Profit', variable = ''))
+        fig.update_layout({'plot_bgcolor':'rgba(0,0,0,0)'})
+        st.plotly_chart(fig, use_container_width= True)
+        st.write("For further analysis, we can break down the gross profit calculation and look at revenue and total costs. Total costs can be broken down further into food costs and bedding costs.")
+        
+        #Revenue Chart
+        st.markdown("### **Revenue Analysis**")
+        fig1 = px.line(df, x = df.index, y = [df['max_revenue_amounts'], df['avg_revenue_amounts'], df['min_revenue_amounts']], labels = dict(value = '$ Revenue', variable = ''))
+        fig1.update_layout({'plot_bgcolor':'rgba(0,0,0,0)'})
+        st.plotly_chart(fig1, use_container_width= True)
 
-# ------------------------------------------------- Sidebar Section -------------------------------------------------------------------------------------------#
-st.sidebar.markdown("### Instructions:")
-st.sidebar.write("Adjust the below inputs to see how different scenarios affect gross profit. Hover over the question mark *tooltips* for additional details about each input.")
-#pulling chicken image
-st.sidebar.image('https://media.istockphoto.com/photos/portrait-of-a-funny-chicken-closeup-isolated-on-white-background-picture-id1132026121?k=6&m=1132026121&s=612x612&w=0&h=B1TjA88Qd5CtpC2NczetV86LR2qYImqMOb9C9OE34P0=')
-st.sidebar.markdown("### Simulation Parameters:")
-#-------------------------------------------------Sliders and Input Values in Sidebar Section ----------------------------#
-#Building Range of Chickens to Iterate Over Slider which allows for two values 
-values = st.sidebar.slider("Range of Chickens to Iterate Over:", 1,50,(5,25), help="Input the range of chickens you are willing to have. The simulation will help you determine what the optimal value in this range is.")
-#only allows for one value -- capping at 100 so user experience isn't poor
-simulation_runs = st.sidebar.slider("Simulations per Chicken:", 1,100, value = 10, help="The benefit of running a simulation is you can run it many times to see what variability there is. We can run multiple simulations for each chicken in the range you've chosen. This will allow us to see many conceivable scenarios and then to choose the option that brings the higest value with the lowest risk. Increasing scenarios will increase the run time of the calculation.") 
-# simulating anywhere from a month to full quarter -- longer affects user experience
-days_to_simulate = st.sidebar.slider("Days to Run the Simulation Over:", 30,90, help = "How many days should we simulate? Do you want to see what gross profit looks like each month? Each quarter? Enter the value in days (i.e. 1 month = 31 days, 1 quarter = 90 days). Increasing this value will increase the run time of the calculation.") 
-#number input for price you will sell a dozen eggs for
-dozen_price = st.sidebar.number_input("Sale Price of a Dozen Eggs:", value = 4.25, help = "How much do you plan to sell a dozen eggs for?")
-#the actual cost of the carton you will be selling the eggs in
-carton_cost = st.sidebar.number_input("Cost of Carton:", value = 0.29, help = "You are packaging the dozen eggs you are selling in a carton. How much does each individual carton cost you?")
-#chickens have a range of eggs they'll produce based on breed, this input allows you to play with that
-egg_production = st.sidebar.slider("Range of Yearly Egg Production:", 150,340,(235,275), help = "What is the low end and high end of egg production per year for the type of hens you have? Most birds lay between 235 to 275 eggs a year. You can google the type of hens you plan to have and find a reasonable estimate.")
-#input allowing you to specify your feed cost
-feed_cost = st.sidebar.number_input("Cost of Feed:", value = 23.99, help = "How much does a single bag of feed cost you?")
-#input allowing you to specify you much feed you bought in pounds
-pounds_of_feed = st.sidebar.number_input("Pounds of Feed:", value = 35, help = "How many pounds of feed are in the bag you purchased?")
-#number input allowing you to change the cost of a bag of bedding
-bedding_bag_cost = st.sidebar.number_input("Cost of Bedding:", value = 8.79, help = "How much does a bag of bedding cost?")
-#number input to specify how much bedding you bought in cubic feet
-cubic_feet_bedding = st.sidebar.number_input("Cubic Feet of Bedding:", value = 10, help = "How many cubic feet are in the bag of bedding you purchased?")
-#how often in days you will fresh the bedding
-days_to_refresh = st.sidebar.slider("Range of Days to Refresh Bedding:", 5,40,(28,32), help = "How often will you need to change the bedding?")
-#additional costs over the time period you've selected
-additional_costs = st.sidebar.number_input("Additional Costs:", value = 0, help = "Any additional costs can be entered here. For example if you are providing vitamins, meal worms, etc.")
-
-st.sidebar.markdown(' ')
-st.sidebar.markdown(' ')
-st.sidebar.markdown(' ')
-st.sidebar.markdown("*This app was built by Christian Thieme using Python and Streamlit*")
-#----------------------------------------------------Running the Simulation Based on User Input or Default Values ----------------------------------------#
-
-#Running chicken_simulation_function based on input values from the user (or defaul values)
-
-#I use the values from the sliders and number inputs to feed my function that runs all of the simulations 
-#each time an input is changed, the function reruns
-df, dict_list = chicken_simulation_function(low_end_chickens = values[0], 
-                                            high_end_chickens = values[1],
-                                            by_how_many_chickens = (values[1]- values[0])+1,
-                                            days = days_to_simulate, 
-                                            sale_price = dozen_price,
-                                            cost_of_carton = carton_cost, 
-                                            yearly_low_end_egg_production = egg_production[0],
-                                            yearly_high_end_egg_production = egg_production[1],
-                                            bag_of_feed_cost = feed_cost, 
-                                            lbs_of_feed = pounds_of_feed, 
-                                            bag_of_bedding_cost = bedding_bag_cost, 
-                                            cubic_feet_of_bedding = cubic_feet_bedding, 
-                                            low_end_days_to_refresh = days_to_refresh[0],
-                                            high_end_days_to_refresh = days_to_refresh[1], 
-                                            additional_cost = additional_costs, 
-                                            simulations_per_chicken = simulation_runs)
-
-#Building columns needed for optimal chicken calc and break even calc
-df['answer'] = df['min_gross_profit_amounts'] + df['avg_gross_profit_amounts'] + df['max_gross_profit_amounts']
-df['break_even'] = df["min_revenue_amounts"] - df["max_total_cost_amounts"] 
-
-#------------------------------------ Visualization Pane on the far right which has values from Simulation Run ------------------------------------------#
-with col3: 
-    st.markdown("### **The Answer** :hatching_chick:")
-    #finding the optimal amount of chickens
-    optimal_chickens = df['answer'].idxmax() 
-
-    #Getting the range of Gross Profit Values for the optimal chicken value
-    min_gross_profit = df.iloc[optimal_chickens-values[0]]['min_gross_profit_amounts']
-    max_gross_profit = df.iloc[optimal_chickens-values[0]]['max_gross_profit_amounts']
-
+        #Total Cost Chart
+        st.markdown("### **Total Cost Analysis**")
+        fig2 = px.line(df, x = df.index, y = [df['max_total_cost_amounts'], df['avg_total_cost_amounts'], df['min_total_cost_amounts']], labels = dict(value = '$ Total Costs', variable = ''))
+        fig2.update_layout({'plot_bgcolor':'rgba(0,0,0,0)'})
+        st.plotly_chart(fig2, use_container_width= True)
     
-    st.markdown("Based on your inputs, you should have **{}** chickens. This number has the highest probability of maximizing gross profit in all scenarios. You can expect to earn between **${}** and **${}** of gross profit every **{}** days.".format(optimal_chickens,round(min_gross_profit,2),round(max_gross_profit,2), days_to_simulate ))
-   
-    #Gross Profit Chart
-    st.markdown("### **Gross Profit Analysis**")
-    fig = px.line(df, x = df.index, y = [df['max_gross_profit_amounts'], df['avg_gross_profit_amounts'], df['min_gross_profit_amounts']], labels = dict(value = '$ Gross Profit', variable = ''))
-    fig.update_layout({'plot_bgcolor':'rgba(0,0,0,0)'})
-    st.plotly_chart(fig, use_container_width= True)
-    st.write("For further analysis, we can break down the gross profit calculation and look at revenue and total costs. Total costs can be broken down further into food costs and bedding costs.")
-    
-    #Revenue Chart
-    st.markdown("### **Revenue Analysis**")
-    fig1 = px.line(df, x = df.index, y = [df['max_revenue_amounts'], df['avg_revenue_amounts'], df['min_revenue_amounts']], labels = dict(value = '$ Revenue', variable = ''))
-    fig1.update_layout({'plot_bgcolor':'rgba(0,0,0,0)'})
-    st.plotly_chart(fig1, use_container_width= True)
+        #Food Cost Chart
+        st.markdown("### **Food Cost Analysis**")
+        fig3 = px.line(df, x = df.index, y = [df['max_food_cost_amounts'], df['avg_food_cost_amounts'], df['min_food_cost_amounts']], labels = dict(value = '$ Food Costs', variable = ''))
+        fig3.update_layout({'plot_bgcolor':'rgba(0,0,0,0)'})
+        st.plotly_chart(fig3, use_container_width= True)
 
-    #Total Cost Chart
-    st.markdown("### **Total Cost Analysis**")
-    fig2 = px.line(df, x = df.index, y = [df['max_total_cost_amounts'], df['avg_total_cost_amounts'], df['min_total_cost_amounts']], labels = dict(value = '$ Total Costs', variable = ''))
-    fig2.update_layout({'plot_bgcolor':'rgba(0,0,0,0)'})
-    st.plotly_chart(fig2, use_container_width= True)
-  
-    #Food Cost Chart
-    st.markdown("### **Food Cost Analysis**")
-    fig3 = px.line(df, x = df.index, y = [df['max_food_cost_amounts'], df['avg_food_cost_amounts'], df['min_food_cost_amounts']], labels = dict(value = '$ Food Costs', variable = ''))
-    fig3.update_layout({'plot_bgcolor':'rgba(0,0,0,0)'})
-    st.plotly_chart(fig3, use_container_width= True)
+        #Bedding Cost Chart
+        st.markdown("### **Bedding Cost Analysis**")
+        fig4 = px.line(df, x = df.index, y = [df['max_bed_cost_amounts'], df['avg_bed_cost_amounts'], df['min_bed_cost_amounts']], labels = dict(value = '$ Bedding Costs', variable = ''))
+        fig4.update_layout({'plot_bgcolor':'rgba(0,0,0,0)'})
+        st.plotly_chart(fig4, use_container_width= True)
 
-    #Bedding Cost Chart
-    st.markdown("### **Bedding Cost Analysis**")
-    fig4 = px.line(df, x = df.index, y = [df['max_bed_cost_amounts'], df['avg_bed_cost_amounts'], df['min_bed_cost_amounts']], labels = dict(value = '$ Bedding Costs', variable = ''))
-    fig4.update_layout({'plot_bgcolor':'rgba(0,0,0,0)'})
-    st.plotly_chart(fig4, use_container_width= True)
+        #Break Even Chart
+        st.markdown("### **Conservative Break Even Point(s)**")
+        fig5 = px.line(df, x = df.index, y = [df['min_revenue_amounts'], df['max_total_cost_amounts']], labels = dict(value = '$', variable = ''))
+        fig5.update_layout({'plot_bgcolor':'rgba(0,0,0,0)'})
+        st.plotly_chart(fig5, use_container_width= True)
 
-    #Break Even Chart
-    st.markdown("### **Conservative Break Even Point(s)**")
-    fig5 = px.line(df, x = df.index, y = [df['min_revenue_amounts'], df['max_total_cost_amounts']], labels = dict(value = '$', variable = ''))
-    fig5.update_layout({'plot_bgcolor':'rgba(0,0,0,0)'})
-    st.plotly_chart(fig5, use_container_width= True)
+        #Building table for break even points
+        bep = df[df['break_even']>=0].reset_index()
+        bep = bep[['# of Chickens','break_even']]
+    # bep.reset_index(inplace = True)
+        st.markdown("If you wanted to have the least amount of chickens possible and still break even, you should have **{}** chickens. The below table shows additional break even points: ".format(bep['# of Chickens'].head(1)[0]))
+        st.write(bep)
 
-    #Building table for break even points
-    bep = df[df['break_even']>=0].reset_index()
-    bep = bep[['# of Chickens','break_even']]
-   # bep.reset_index(inplace = True)
-    st.markdown("If you wanted to have the least amount of chickens possible and still break even, you should have **{}** chickens. The below table shows additional break even points: ".format(bep['# of Chickens'].head(1)[0]))
-    st.write(bep)
+        st.markdown(" ")
+        make_downloadable(df)
 
-    st.markdown(" ")
-    make_downloadable(df)
+if __name__ == "__main__":
+    main()
