@@ -9,3 +9,5 @@
 ### Project 3: [Shiny Deployed App - CDC Mortality Rates with R Shiny and Plotly](https://christianthieme.shinyapps.io/Exploring_Mortality_with_Shiny/)
 
 ### Project 4: [Heroku Deployed App - New York City Tree Health Analysis with Dash and Plotly](https://nyc-tree-api-dashboard.herokuapp.com/)
+
+### Final Project: [Chicken Organic Egg Sale Simulation - Python Streamlit app](https://share.streamlit.io/christianthieme/knowledge-and-visual-analytics/main/Streamlit_Organic_Egg_Simulator_Streamlit/streamlit_organic_egg_simulator.py)
